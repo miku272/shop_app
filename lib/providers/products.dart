@@ -1,10 +1,12 @@
-// ignore_for_file: prefer_final_fields
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 import './product.dart';
 
 class Products with ChangeNotifier {
+  // ignore: prefer_final_fields
   List<Product> _items = [
     Product(
       id: 'p1',
@@ -47,17 +49,36 @@ class Products with ChangeNotifier {
   }
 
   void addProduct(Product product) {
-    final newProduct = Product(
-      id: DateTime.now().toString(),
-      title: product.title,
-      description: product.description,
-      price: product.price,
-      imageUrl: product.imageUrl,
+    final url = Uri.parse(
+        'https://flutter-practice-a70e8-default-rtdb.asia-southeast1.firebasedatabase.app/products.json');
+    http
+        .post(
+      url,
+      body: jsonEncode(
+        {
+          'title': product.title,
+          'description': product.description,
+          'price': product.price,
+          'imageUrl': product.imageUrl,
+          'isFavorite': product.isFavorite,
+        },
+      ),
+    )
+        .then(
+      (response) {
+        final newProduct = Product(
+          id: json.decode(response.body)['name'],
+          title: product.title,
+          description: product.description,
+          price: product.price,
+          imageUrl: product.imageUrl,
+        );
+
+        _items.add(newProduct);
+
+        notifyListeners();
+      },
     );
-
-    _items.add(newProduct);
-
-    notifyListeners();
   }
 
   void updateProduct(String id, Product newProduct) {
