@@ -28,12 +28,12 @@ class CartItem extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
         padding: const EdgeInsets.only(right: 20),
         color: Theme.of(context).errorColor,
+        alignment: Alignment.centerRight,
         child: const Icon(
           Icons.delete,
           color: Colors.white,
           size: 40,
         ),
-        alignment: Alignment.centerRight,
       ),
       onDismissed: (direction) {
         if (direction == DismissDirection.endToStart) {

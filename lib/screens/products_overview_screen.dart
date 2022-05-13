@@ -28,8 +28,8 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
         actions: [
           Consumer<Cart>(
             builder: (context, cartData, child) => Badge(
-              child: child!,
               value: cartData.itemCount == 0 ? '' : '${cartData.itemCount}',
+              child: child!,
             ),
             child: IconButton(
               onPressed: () {
@@ -55,12 +55,12 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
             ),
             itemBuilder: (ctx) => [
               const PopupMenuItem(
-                child: Text('Only Favorites'),
                 value: FilterOptions.favorites,
+                child: Text('Only Favorites'),
               ),
               const PopupMenuItem(
-                child: Text('Show All'),
                 value: FilterOptions.all,
+                child: Text('Show All'),
               ),
             ],
           ),
