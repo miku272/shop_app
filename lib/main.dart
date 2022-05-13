@@ -36,6 +36,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Shopping app',
         theme: ThemeData(
+          useMaterial3: true,
           primaryColor: Colors.purple,
           colorScheme: ColorScheme.fromSwatch(
             accentColor: Colors.deepOrange,
