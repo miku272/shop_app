@@ -48,10 +48,10 @@ class Products with ChangeNotifier {
     return _items.firstWhere((prod) => prod.id == id);
   }
 
-  void addProduct(Product product) {
+  Future<void> addProduct(Product product) {
     final url = Uri.parse(
         'https://flutter-practice-a70e8-default-rtdb.asia-southeast1.firebasedatabase.app/products.json');
-    http
+    return http
         .post(
       url,
       body: jsonEncode(
@@ -78,7 +78,9 @@ class Products with ChangeNotifier {
 
         notifyListeners();
       },
-    );
+    ).catchError((error) {
+      throw error;
+    });
   }
 
   void updateProduct(String id, Product newProduct) {
