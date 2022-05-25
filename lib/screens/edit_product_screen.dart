@@ -50,7 +50,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
   }
 
-  void _saveForm() {
+  Future<void> _saveForm() async {
     final isValid = _form.currentState?.validate();
 
     if (!isValid!) {
@@ -63,50 +63,48 @@ class _EditProductScreenState extends State<EditProductScreen> {
     });
 
     if (_editedProduct.id != 'none') {
-      Provider.of<Products>(context, listen: false)
+      await Provider.of<Products>(context, listen: false)
           .updateProduct(_editedProduct.id, _editedProduct);
-
-      setState(() {
-        _isLoading = true;
-      });
-
-      Navigator.of(context).pop();
     } else {
-      Provider.of<Products>(context, listen: false)
-          .addProduct(_editedProduct)
-          .catchError(
-        (error) {
-          // ignore: prefer_void_to_null
-          return showDialog<Null>(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text(
-                'An error occured',
-              ),
-              content: const Text(
-                'Something went wrong',
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text(
-                    'Okay',
-                  ),
-                ),
-              ],
+      try {
+        await Provider.of<Products>(context, listen: false)
+            .addProduct(_editedProduct);
+      } catch (error) {
+        // ignore: prefer_void_to_null
+        await showDialog<Null>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text(
+              'An error occured',
             ),
-          );
-        },
-      ).then((value) {
+            content: const Text(
+              'Something went wrong',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text(
+                  'Okay',
+                ),
+              ),
+            ],
+          ),
+        );
+      } finally {
         setState(() {
           _isLoading = true;
         });
 
         Navigator.of(context).pop();
-      });
+      }
     }
+    setState(() {
+      _isLoading = true;
+    });
+
+    Navigator.of(context).pop();
   }
 
   @override
