@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import './product.dart';
+import '../models/http_exception.dart';
 
 class Products with ChangeNotifier {
   // ignore: prefer_final_fields
@@ -138,7 +139,7 @@ class Products with ChangeNotifier {
     }
   }
 
-  void deleteProduct(String id) {
+  Future<void> deleteProduct(String id) async {
     final url = Uri.parse(
         'https://flutter-practice-a70e8-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json');
     final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
@@ -148,19 +149,15 @@ class Products with ChangeNotifier {
 
     notifyListeners();
 
-    http.delete(url).then(
-      (response) {
-        if (response.statusCode >= 400) {}
+    final response = await http.delete(url);
 
-        existingProduct.dispose();
-      },
-    ).catchError(
-      (error) {
-        _items.insert(existingProductIndex, existingProduct);
+    if (response.statusCode >= 400) {
+      _items.insert(existingProductIndex, existingProduct);
+      notifyListeners();
 
-        notifyListeners();
-      },
-    );
+      throw HttpException('Something went wrong! Could not delete the product');
+    }
+    existingProduct.dispose();
   }
 
   // void showFavoritesOnly() {
