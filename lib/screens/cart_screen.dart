@@ -49,25 +49,7 @@ class CartScreen extends StatelessWidget {
                     ),
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pushNamed(OrdersScreen.routeName);
-
-                      order.addOrder(
-                        cart.items.values.toList(),
-                        cart.totalAmount,
-                      );
-
-                      cart.clearCart();
-                    },
-                    child: Text(
-                      'Order Now!',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    ),
-                  ),
+                  OrderButton(cart: cart, order: order),
                 ],
               ),
             ),
@@ -87,6 +69,61 @@ class CartScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class OrderButton extends StatefulWidget {
+  final Cart cart;
+  final Orders order;
+
+  const OrderButton({
+    Key? key,
+    required this.cart,
+    required this.order,
+  }) : super(key: key);
+
+  @override
+  State<OrderButton> createState() => _OrderButtonState();
+}
+
+class _OrderButtonState extends State<OrderButton> {
+  var _isLoading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    var navigator = Navigator.of(context);
+
+    return TextButton(
+      onPressed: (widget.cart.totalAmount <= 0 || _isLoading)
+          ? null
+          : () async {
+              setState(() {
+                _isLoading = true;
+              });
+
+              await widget.order.addOrder(
+                widget.cart.items.values.toList(),
+                widget.cart.totalAmount,
+              );
+
+              setState(() {
+                _isLoading = false;
+              });
+
+              widget.cart.clearCart();
+
+              navigator.pushNamed(OrdersScreen.routeName);
+            },
+      child: _isLoading
+          ? const CircularProgressIndicator()
+          : Text(
+              'Order Now!',
+              style: TextStyle(
+                fontSize: 18,
+                color: Theme.of(context).primaryColor,
+              ),
+            ),
     );
   }
 }
