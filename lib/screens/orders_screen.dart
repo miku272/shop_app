@@ -39,7 +39,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
   }
 
   Future _obtainOrdersFuture() {
-    return Provider.of<Orders>(context).fetchAndSetOrders();
+    return Provider.of<Orders>(context, listen: false).fetchAndSetOrders();
   }
 
   @override
